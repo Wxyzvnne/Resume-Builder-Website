@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume Builder</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f3f4f6;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+}
+
+.form-section,
+.preview-section {
+  flex: 1 1 500px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+h2 {
+  margin-top: 0;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  padding: 10px 15px;
+  margin-right: 10px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.update-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.update-btn:hover {
+  background: #1e40af;
+}
+
+.pdf-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.pdf-btn:hover {
+  background: #166534;
+}
+
+/* Resume Preview Styling */
+
+.resume {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.resume h1 {
+  margin-bottom: 5px;
+}
+
+.resume h3 {
+  margin-top: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+ul {
+  padding-left: 18px;
+}
+
+.contact {
+  color: gray;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Simple Resume Builder</h1>
+</header>
+
+<div class="container">
+
+  <!-- FORM -->
+  <div class="form-section">
+    <h2>Enter Your Details</h2>
+
+    <input id="name" placeholder="Full Name">
+    <input id="email" placeholder="Email">
+    <input id="phone" placeholder="Phone">
+    <input id="location" placeholder="Location">
+
+    <textarea id="summary" placeholder="Professional Summary"></textarea>
+
+    <textarea id="skills" placeholder="Skills (comma separated)"></textarea>
+
+    <textarea id="experience" placeholder="Experience (one per line)"></textarea>
+
+    <textarea id="education" placeholder="Education"></textarea>
+
+    <button class="update-btn" onclick="updateResume()">Update Resume</button>
+    <button class="pdf-btn" onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview-section">
+    <div id="resumePreview" class="resume">
+      <h1 id="rName">Your Name</h1>
+      <p class="contact" id="rContact">Email | Phone | Location</p>
+
+      <h3>Summary</h3>
+      <p id="rSummary"></p>
+
+      <h3>Skills</h3>
+      <ul id="rSkills"></ul>
+
+      <h3>Experience</h3>
+      <ul id="rExperience"></ul>
+
+      <h3>Education</h3>
+      <p id="rEducation"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function updateResume() {
+
+  document.getElementById("rName").innerText =
+    document.getElementById("name").value || "Your Name";
+
+  document.getElementById("rContact").innerText =
+    `${document.getElementById("email").value} | 
+     ${document.getElementById("phone").value} | 
+     ${document.getElementById("location").value}`;
+
+  document.getElementById("rSummary").innerText =
+    document.getElementById("summary").value;
+
+  // Skills
+  const skillsInput = document.getElementById("skills").value.split(",");
+  const skillsList = document.getElementById("rSkills");
+  skillsList.innerHTML = "";
+
+  skillsInput.forEach(skill => {
+    if(skill.trim() !== ""){
+      const li = document.createElement("li");
+      li.innerText = skill.trim();
+      skillsList.appendChild(li);
+    }
+  });
+
+  // Experience
+  const experienceInput = document.getElementById("experience").value.split("\n");
+  const experienceList = document.getElementById("rExperience");
+  experienceList.innerHTML = "";
+
+  experienceInput.forEach(exp => {
+    if(exp.trim() !== ""){
+      const li = document.createElement("li");
+      li.innerText = exp.trim();
+      experienceList.appendChild(li);
+    }
+  });
+
+  document.getElementById("rEducation").innerText =
+    document.getElementById("education").value;
+}
+
+function downloadPDF() {
+  const element = document.getElementById("resumePreview");
+  html2pdf().from(element).save("resume.pdf");
+}
+</script>
+
+</body>
+</html>
